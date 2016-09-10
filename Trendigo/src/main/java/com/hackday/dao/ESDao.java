@@ -24,7 +24,7 @@ public class ESDao {
 
     private TransportClient getClient() {
         Settings settings = Settings.settingsBuilder()
-                .put("cluster.name", "trendigo").build();
+                .put("cluster.name", Constants.Trendigo).build();
         try {
             client = TransportClient.builder().settings(settings).build().addTransportAddress(
                     (new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300)));
