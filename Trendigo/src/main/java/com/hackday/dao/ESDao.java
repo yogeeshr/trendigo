@@ -19,10 +19,10 @@ import java.util.List;
  * Created by yogeesh.rajendra on 9/10/16.
  */
 public class ESDao {
-  
-      private TransportClient client = null;
 
-    private TransportClient getClient() {
+    private static TransportClient client = null;
+
+    public static TransportClient getClient() {
         Settings settings = Settings.settingsBuilder()
                 .put("cluster.name", Constants.TRENDIGO).build();
         try {
@@ -35,55 +35,135 @@ public class ESDao {
         return null;
     }
 
-    public Boolean writeESProduct(List<? extends EsEvent> products) throws Exception {
+    public static Boolean writeESProduct(List<EsEvent> eventList) throws Exception {
 
         try {
-
             if (client == null) {
                 client = getClient();
             }
-
-
             BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+            for (EsEvent event : eventList) {
+                bulkRequestBuilder.add(client.prepareIndex(Constants.Events, Constants.Liveevents,
+                        event.getEventId()).setSource(new Gson().toJson(event)));
 
-            for (EsEvent product : products) {
+                for (EsEvent product : eventList) {
 
-                String json = new Gson().toJson(product);
+                    String json = new Gson().toJson(product);
 
-                String updateJson = new Gson().toJson(product);
+                    String updateJson = new Gson().toJson(product);
 
-                IndexRequest indexRequest = new IndexRequest(Constants.TRENDIGO, Constants.EVENTS,
-                        product.getEventId()).
-                        source(json);
+                    IndexRequest indexRequest = new IndexRequest(Constants.TRENDIGO, Constants.EVENTS,
+                            product.getEventId()).
+                            source(json);
 
-                UpdateRequest updateRequest = new UpdateRequest(Constants.TRENDIGO, Constants.EVENTS,
-                        product.getEventId()).
-                        upsert(indexRequest);
+                    UpdateRequest updateRequest = new UpdateRequest(Constants.TRENDIGO, Constants.EVENTS,
+                            product.getEventId()).
+                            upsert(indexRequest);
 
-                boolean indexYes = client.admin().indices().prepareExists(Constants.TRENDIGO).execute().actionGet()
-                        .isExists();
+                    boolean indexYes = client.admin().indices().prepareExists(Constants.TRENDIGO).execute().actionGet()
+                            .isExists();
 
-                bulkRequestBuilder.add(updateRequest);
+                    bulkRequestBuilder.add(updateRequest);
+
+                }
+                BulkResponse bulkResponse = bulkRequestBuilder.get();
+
+                if (bulkResponse.hasFailures()) {
+                    System.out.println(bulkResponse.buildFailureMessage() + " Bulk Update Error");
+                }
+
+                return true;
             }
-
-
-            BulkResponse bulkResponse = bulkRequestBuilder.get();
-
-            if (bulkResponse.hasFailures()) {
-                System.out.println(bulkResponse.buildFailureMessage() + " Bulk Update Error");
-            }
-
-            return true;
         } catch (Exception e) {
             System.out.println("Exception occurred in bulk request builder - " + e);
             return false;
         } finally {
             closeClients();
         }
+        return false;
     }
 
-    private void closeClients() {
-        client.close();
+    private static void closeClients() {
+        if (null != client)
+            client.close();
     }
-  
+
+//    private static EsEvent getNormalizedEvent(JSONObject jsonObject) {
+//
+//        EsEvent event = new EsEvent();
+//        event.setEventId(jsonObject.getString(Constants.EVENT_ID));
+//
+//        JSONObject venueObject = (JSONObject) jsonObject.get(Constants.VENUE);
+//        event.setLatitude(venueObject.getDouble(Constants.LATITUDE));
+//        event.setLongitude(venueObject.getDouble(Constants.LONGITUDE));
+//        event.setEventName(jsonObject.getString(Constants.EVENT_NAME));
+//        event.setEventUrl(jsonObject.getString(Constants.EVENT_URL));
+//        event.setStartTime(jsonObject.getLong(Constants.START_TIME));
+//        event.setEndTime(jsonObject.getLong(Constants.END_TIME));
+//        event.setLabel(jsonObject.getString(Constants.LABEL));
+//        event.setLocation(jsonObject.getString(Constants.LABEL));
+//        event.setScore(jsonObject.getDouble(Constants.SCORE));
+//
+//        JSONArray tagArray = jsonObject.getJSONArray(Constants.TAGS);
+//
+//        StringBuilder tagString = new StringBuilder();
+//        for (int i = 0; i < tagArray.length(); i++) {
+//            tagString.append(tagArray.get(i));
+//            tagString.append(" ");
+//        }
+//        event.setTags(tagString.toString());
+//
+//        JSONArray categoriesArray = jsonObject.getJSONArray(Constants.CATEGORIES);
+//
+//        StringBuilder categoriesString = new StringBuilder();
+//        for (int i = 0; i < categoriesArray.length(); i++) {
+//            categoriesString.append(categoriesArray.get(i));
+//            categoriesString.append(" ");
+//        }
+//
+//        event.setCategories(categoriesString.toString());
+//
+//        return event;
+//    }
+
+//    EVENTS INGESTION
+//
+//    public static void main(String[] args) {
+//        HttpClient httpclient = HttpClients.createDefault();
+//
+//        try {
+//            URIBuilder builder = new URIBuilder("https://api.allevents.in/events/list/");
+//
+//            builder.setParameter("city", "bangalore");
+//            builder.setParameter("state", "karnataka");
+//            builder.setParameter("country", "India");
+//            builder.setParameter("sdate", "11-09-2016");
+//            builder.setParameter("edate", "31-12-2016");
+//
+//            URI uri = builder.build();
+//            HttpPost request = new HttpPost(uri);
+//            request.setHeader("Ocp-Apim-Subscription-Key", "73007f16253246d5b65d5885c9150407");
+//
+//            // Request body
+//            StringEntity reqEntity = new StringEntity("{body}");
+//            request.setEntity(reqEntity);
+//
+//            HttpResponse response = httpclient.execute(request);
+//            HttpEntity entity = response.getEntity();
+//
+//            if (entity != null) {
+//                JSONObject object = new JSONObject(EntityUtils.toString(entity));
+//                JSONArray jsonArray = object.getJSONArray("data");
+//                List<EsEvent> eventList = new ArrayList<>();
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    EsEvent newEvent = getNormalizedEvent(jsonArray.getJSONObject(i));
+//                    eventList.add(newEvent);
+//                }
+//                writeESProduct(eventList);
+//
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }

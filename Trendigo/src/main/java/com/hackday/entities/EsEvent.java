@@ -12,12 +12,14 @@ public class EsEvent {
     private Long startTime;
     private Long endTime;
     private String location;
-    private VenueDetails venue;
     private String label;
     private String eventUrl;
     private String bannerUrl;
-    private List<String> categories;
-    private List<String> tags;
+    private String categories;
+    private String tags;
+    private Double latitude;
+    private Double longitude;
+    private Double score;
 
     public String getEventId() {
         return eventId;
@@ -59,14 +61,6 @@ public class EsEvent {
         this.location = location;
     }
 
-    public VenueDetails getVenue() {
-        return venue;
-    }
-
-    public void setVenue(VenueDetails venue) {
-        this.venue = venue;
-    }
-
     public String getLabel() {
         return label;
     }
@@ -91,20 +85,59 @@ public class EsEvent {
         this.bannerUrl = bannerUrl;
     }
 
-    public List<String> getCategories() {
+    public String getCategories() {
         return categories;
     }
 
-    public void setCategories(List<String> categories) {
+    public void setCategories(String categories) {
         this.categories = categories;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
     }
-  
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        return "EsEvent{" +
+                "eventId='" + eventId + '\'' +
+                ", eventName='" + eventName + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", location='" + location + '\'' +
+                ", label='" + label + '\'' +
+                ", eventUrl='" + eventUrl + '\'' +
+                ", bannerUrl='" + bannerUrl + '\'' +
+                ", categories=" + categories +
+                ", tags=" + tags +
+                '}';
+    }
 }
