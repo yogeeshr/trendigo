@@ -5,23 +5,25 @@ import com.hackday.entities.EsEvent;
 import com.hackday.utils.Constants;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.joda.time.Instant;
 import org.json.JSONArray;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * Created by yogeesh.rajendra on 9/10/16.
@@ -54,11 +56,11 @@ public class ESDao {
 
     public static JSONArray getTopTrendingEvents(double lat, double lng) {
         JSONArray trendingEvents = new JSONArray();
-        long currentEpoc = (Instant.now().getMillis())/1000;
+        long currentEpoc = (Instant.now().getMillis()) / 1000;
 
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         queryBuilder.must(QueryBuilders.rangeQuery(Constants.END_TIME).gt(currentEpoc));
-        queryBuilder.mustNot(QueryBuilders.matchQuery("bannerUrl", ""));
+        queryBuilder.mustNot(QueryBuilders.matchQuery(Constants.BANNER_URL, ""));
 
         System.out.println(queryBuilder.toString());
 
@@ -72,9 +74,27 @@ public class ESDao {
                 .execute()
                 .actionGet();
 
+        //Scroll until no hits are returned
+        while (true) {
+
+            for (SearchHit hit : response.getHits().getHits()) {
+                //Handle the hit...
+                Map<String, Object> map = hit.getSource();
+                trendingEvents.put(map.toString());
+                response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).
+                        execute().actionGet();
+
+            }
+
+            //Break condition: No hits are returned
+            if (response.getHits().getHits().length == 0) {
+                break;
+            }
+        }
+
         closeClients();
 
-        System.out.println(response.toString());
+        System.out.println(trendingEvents.toString());
 
         return trendingEvents;
     }

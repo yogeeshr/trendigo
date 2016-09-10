@@ -13,6 +13,7 @@ public class Constants {
     public static final String TITLE = "title";
     public static final String IMAGEURL = "imageurl";
     public static final String URL = "url";
+    public static final String BANNER_URL = "bannerUrl";
     public static final String ADDRESS = "address";
     public static final String Events = "events";
     public static final String Liveevents = "liveevents";
