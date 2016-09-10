@@ -7,4 +7,5 @@ public class Constants {
 
     public static final String Trendigo = "trendigo";
     public static final String Events = "events";
+    public static final String Liveevents = "liveevents";
 }
