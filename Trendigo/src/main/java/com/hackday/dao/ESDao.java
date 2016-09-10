@@ -1,10 +1,12 @@
 package com.hackday.dao;
 
+import com.google.gson.Gson;
+import com.hackday.entities.EsEvent;
+import com.hackday.utils.Constants;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -33,7 +35,7 @@ public class ESDao {
         return null;
     }
 
-    public Boolean writeESProduct(List<? extends EsProduct> products) throws Exception {
+    public Boolean writeESProduct(List<? extends EsEvent> products) throws Exception {
 
         try {
 
@@ -46,7 +48,7 @@ public class ESDao {
 
             //TODO : Check if merchant id always exist : fallback
 
-            for (EsProduct product : products) {
+            for (EsEvent product : products) {
 
                 //JSON With user story tagging which will be used for new document creation
                 String json = new Gson().toJson(product);
@@ -55,11 +57,11 @@ public class ESDao {
                 //JSON without user story tagging - which will be used for updating
                 String updateJson = new Gson().toJson(product);
 
-                IndexRequest indexRequest = new IndexRequest("trendigo", "events",
+                IndexRequest indexRequest = new IndexRequest(Constants.Trendigo, Constants.Events,
                         product.getEventId()).
                         source(json);
 
-                UpdateRequest updateRequest = new UpdateRequest("trendigo", "events",
+                UpdateRequest updateRequest = new UpdateRequest(Constants.Trendigo, Constants.Events,
                         product.getEventId()).
                         upsert(indexRequest);
 
