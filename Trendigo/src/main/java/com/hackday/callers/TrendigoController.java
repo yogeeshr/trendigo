@@ -34,7 +34,7 @@ public class TrendigoController {
             e.printStackTrace();
         }
 
-        JSONObject replyJson = new JSONObject("{'1' : '2'}");
+        JSONObject replyJson = new JSONObject("{'businessname' : 'ITC Gardenia', '':}");
 
         return Response.status(200).entity(replyJson.toString()).build();
     }
