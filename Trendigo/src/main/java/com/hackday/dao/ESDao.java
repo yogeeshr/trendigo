@@ -17,6 +17,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.joda.time.Instant;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -54,8 +56,11 @@ public class ESDao {
             client.close();
     }
 
-    public static JSONArray getTopTrendingEvents(double lat, double lng) {
-        JSONArray trendingEvents = new JSONArray();
+    public static String getTopTrendingEvents(double lat, double lng) {
+
+        String [] include = {"eventName", "startTime", "endTime", "location", "eventUrl", "bannerUrl", "latitude", "longitude"};
+        String [] exclude = {"categories", "tags", "eventId"};
+        String trendingEvents;
         long currentEpoc = (Instant.now().getMillis()) / 1000;
 
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
@@ -70,32 +75,14 @@ public class ESDao {
                 .setTypes(Constants.Liveevents)
                 .setSearchType(SearchType.QUERY_AND_FETCH)
                 .setQuery(queryBuilder)
+                .setFetchSource(include, exclude)
                 .setSize(10)
                 .execute()
                 .actionGet();
 
-        //Scroll until no hits are returned
-        while (true) {
-
-            for (SearchHit hit : response.getHits().getHits()) {
-                //Handle the hit...
-                Map<String, Object> map = hit.getSource();
-                trendingEvents.put(map.toString());
-                response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).
-                        execute().actionGet();
-
-            }
-
-            //Break condition: No hits are returned
-            if (response.getHits().getHits().length == 0) {
-                break;
-            }
-        }
-
+        trendingEvents = esResponseBuilder(response.toString());
+        System.out.println(trendingEvents);
         closeClients();
-
-        System.out.println(trendingEvents.toString());
-
         return trendingEvents;
     }
 
@@ -133,6 +120,27 @@ public class ESDao {
         } finally {
             closeClients();
         }
+    }
+
+    private static String esResponseBuilder(String data) throws JSONException {
+
+        JSONObject esResponse = new JSONObject(data);
+        JSONObject hits, product, sourceJson;
+        JSONArray productsArray;
+
+        productsArray = esResponse.getJSONObject("hits").getJSONArray("hits");
+
+        JSONArray respArray = new JSONArray();
+
+        for (int i = 0; i < productsArray.length(); i++) {
+            product = productsArray.getJSONObject(i);
+            sourceJson = product.getJSONObject("_source");
+            respArray.put(sourceJson);
+        }
+
+        JSONObject dataObject = new JSONObject();
+        dataObject.put("events", respArray);
+        return dataObject.toString();
     }
 
 //    private static EsEvent getNormalizedEvent(JSONObject jsonObject) {
