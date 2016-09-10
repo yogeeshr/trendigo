@@ -50,13 +50,13 @@ public class Manager {
         return fireSalesArray;
     }
 
-    public static JSONArray getTrendingEvents(String lat, String lng) {
-        JSONArray trendingEventsArray = new JSONArray();
+    public static String getTrendingEvents(String lat, String lng) {
+        String trendingEventsArray = null;
 
         Double latitude = Double.parseDouble(lat);
         Double longitude = Double.parseDouble(lng);
 
-        ESDao.getTopTrendingEvents(latitude, longitude);
+        trendingEventsArray = ESDao.getTopTrendingEvents(latitude, longitude);
 
         return trendingEventsArray;
     }

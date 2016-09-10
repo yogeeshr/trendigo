@@ -6,10 +6,7 @@ import com.hackday.utils.TrendigoUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 
@@ -48,32 +45,28 @@ public class TrendigoController {
         return Response.status(200).entity(jsonArray.get(0).toString()).build();
     }
 
-    @POST
+    @GET
     @Path("/getevents")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response getTrandingEvents(InputStream incomingData) {
+    public Response getTrandingEvents(@QueryParam("lat") String latitude,
+                                      @QueryParam("long") String longitude) {
 
-        JSONObject payload = null;
-        JSONArray jsonArray = null;
+        String responseArray = null;
 
         try {
-
-            payload = TrendigoUtils.getRequestJson(incomingData);
-
-            if (null == payload || !payload.has(Constants.LAT) ||
-                    !payload.has(Constants.LONG) ) {
+            if (null == latitude || null == longitude ||
+                    latitude.length() == 0 || longitude.length() == 0) {
                 return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
             }
 
-            jsonArray = Manager.getTrendingEvents(payload.getString(Constants.LAT), payload
-                    .getString(Constants.LONG));
+            responseArray = Manager.getTrendingEvents(latitude, longitude);
 
         } catch (Exception e){
             e.printStackTrace();
             return Response.status(503).entity("Internal Server Error").build();
         }
 
-        return Response.status(200).entity(jsonArray.toString()).build();
+        return Response.status(200).entity(responseArray).build();
     }
 }

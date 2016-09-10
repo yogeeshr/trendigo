@@ -7,14 +7,11 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
 import org.joda.time.Instant;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +20,6 @@ import org.json.JSONObject;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Map;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * Created by yogeesh.rajendra on 9/10/16.
@@ -66,8 +60,8 @@ public class ESDao {
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         queryBuilder.must(QueryBuilders.rangeQuery(Constants.END_TIME).gt(currentEpoc));
         queryBuilder.mustNot(QueryBuilders.matchQuery(Constants.BANNER_URL, ""));
-
-        System.out.println(queryBuilder.toString());
+        queryBuilder.mustNot(QueryBuilders.matchQuery("latitude", 0));
+        queryBuilder.mustNot(QueryBuilders.matchQuery("longitude", 0));
 
         createClient();
 
@@ -81,7 +75,6 @@ public class ESDao {
                 .actionGet();
 
         trendingEvents = esResponseBuilder(response.toString());
-        System.out.println(trendingEvents);
         closeClients();
         return trendingEvents;
     }
