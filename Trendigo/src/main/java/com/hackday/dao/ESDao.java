@@ -45,14 +45,11 @@ public class ESDao {
 
 
             BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
-            
-            for (EsEvent product : products) {
 
-                //JSON With user story tagging which will be used for new document creation
+            for (EsEvent product : products) {
+                
                 String json = new Gson().toJson(product);
 
-
-                //JSON without user story tagging - which will be used for updating
                 String updateJson = new Gson().toJson(product);
 
                 IndexRequest indexRequest = new IndexRequest(Constants.Trendigo, Constants.Events,
