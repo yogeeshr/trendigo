@@ -65,7 +65,8 @@ public class ESDao {
                         product.getEventId()).
                         upsert(indexRequest);
 
-                boolean indexYes = client.admin().indices().prepareExists("trendigo").execute().actionGet().isExists();
+                boolean indexYes = client.admin().indices().prepareExists(Constants.Trendigo).execute().actionGet()
+                        .isExists();
 
                 bulkRequestBuilder.add(updateRequest);
             }
