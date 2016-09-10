@@ -60,6 +60,7 @@ public class ESDao {
             for (EsEvent event : eventList) {
                 bulkRequestBuilder.add(client.prepareIndex(Constants.Events, Constants.Liveevents,
                         event.getEventId()).setSource(new Gson().toJson(event)));
+
             }
             BulkResponse bulkResponse = bulkRequestBuilder.get();
 
