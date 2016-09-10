@@ -18,14 +18,14 @@ public class EsQueryBuilder {
         queryBuilder.must(QueryBuilders.matchQuery("categories", "workshop"));
 
         System.out.println(queryBuilder);
-        TransportClient client = ESDao.getClient();
+//        TransportClient client = ESDao.getClient();
 
-        SearchResponse response = client.prepareSearch(Constants.Events)
-                .setTypes(Constants.Liveevents)
-                .setSearchType(SearchType.QUERY_AND_FETCH)
-                .setQuery(queryBuilder)
-                .execute()
-                .actionGet();
+//        SearchResponse response = client.prepareSearch(Constants.Events)
+//                .setTypes(Constants.Liveevents)
+//                .setSearchType(SearchType.QUERY_AND_FETCH)
+//                .setQuery(queryBuilder)
+//                .execute()
+//                .actionGet();
 
 //        System.out.println(response.toString());
 

@@ -1,5 +1,6 @@
 package com.hackday.manager;
 
+import com.hackday.dao.ESDao;
 import com.hackday.dao.MySQLDao;
 import com.hackday.utils.Constants;
 import org.json.JSONArray;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * Created by yogeesh.rajendra on 9/10/16.
  */
-public class FireSalesManager {
+public class Manager {
 
     /**
      * Utility to get fire sales near by
@@ -49,4 +50,14 @@ public class FireSalesManager {
         return fireSalesArray;
     }
 
+    public static JSONArray getTrendingEvents(String lat, String lng) {
+        JSONArray trendingEventsArray = new JSONArray();
+
+        Double latitude = Double.parseDouble(lat);
+        Double longitude = Double.parseDouble(lng);
+
+        ESDao.getTopTrendingEvents(latitude, longitude);
+
+        return trendingEventsArray;
+    }
 }

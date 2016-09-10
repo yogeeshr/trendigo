@@ -1,6 +1,6 @@
 package com.hackday.callers;
 
-import com.hackday.manager.FireSalesManager;
+import com.hackday.manager.Manager;
 import com.hackday.utils.Constants;
 import com.hackday.utils.TrendigoUtils;
 import org.json.JSONArray;
@@ -37,7 +37,7 @@ public class TrendigoController {
                 return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
             }
 
-             jsonArray = FireSalesManager.getFireSalesNearBy(payload.getString(Constants.LAT), payload
+             jsonArray = Manager.getFireSalesNearBy(payload.getString(Constants.LAT), payload
                     .getString(Constants.LONG));
 
         } catch (Exception e){
@@ -46,5 +46,34 @@ public class TrendigoController {
         }
 
         return Response.status(200).entity(jsonArray.get(0).toString()).build();
+    }
+
+    @POST
+    @Path("/getevents")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response getTrandingEvents(InputStream incomingData) {
+
+        JSONObject payload = null;
+        JSONArray jsonArray = null;
+
+        try {
+
+            payload = TrendigoUtils.getRequestJson(incomingData);
+
+            if (null == payload || !payload.has(Constants.LAT) ||
+                    !payload.has(Constants.LONG) ) {
+                return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
+            }
+
+            jsonArray = Manager.getTrendingEvents(payload.getString(Constants.LAT), payload
+                    .getString(Constants.LONG));
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return Response.status(503).entity("Internal Server Error").build();
+        }
+
+        return Response.status(200).entity(jsonArray.toString()).build();
     }
 }

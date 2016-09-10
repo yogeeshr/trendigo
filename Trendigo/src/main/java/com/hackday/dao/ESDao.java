@@ -6,13 +6,21 @@ import com.hackday.utils.Constants;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.joda.time.Instant;
+import org.json.JSONArray;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -22,25 +30,69 @@ public class ESDao {
 
     private static TransportClient client = null;
 
-    public static TransportClient getClient() {
+    /**
+     * Utility to create client
+     */
+    private static void createClient() {
         Settings settings = Settings.settingsBuilder()
                 .put("cluster.name", Constants.TRENDIGO).build();
         try {
             client = TransportClient.builder().settings(settings).build().addTransportAddress(
                     (new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300)));
-            return client;
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
-    public static Boolean writeESProduct(List<EsEvent> eventList) throws Exception {
+    /**
+     * Utility to close clients
+     */
+    private static void closeClients() {
+        if (null != client)
+            client.close();
+    }
+
+    public static JSONArray getTopTrendingEvents(double lat, double lng) {
+        JSONArray trendingEvents = new JSONArray();
+        long currentEpoc = (Instant.now().getMillis())/1000;
+
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+        queryBuilder.must(QueryBuilders.rangeQuery(Constants.END_TIME).gt(Instant.now().getMillis()));
+
+        System.out.println(queryBuilder.toString());
+
+        createClient();
+
+        SearchResponse response = client.prepareSearch(Constants.Events)
+                .setTypes(Constants.Liveevents)
+                .setSearchType(SearchType.QUERY_AND_FETCH)
+                .setQuery(queryBuilder)
+                .setSize(10)
+                .execute()
+                .actionGet();
+
+        closeClients();
+
+        System.out.println(response.toString());
+
+        return trendingEvents;
+    }
+
+    public static void main(String[] args) throws Exception {
+        getTopTrendingEvents(1, 1);
+    }
+
+    /**
+     * Utility to write event into ES
+     *
+     * @param eventList
+     * @return
+     * @throws Exception
+     */
+    public static Boolean writeESEvent(List<EsEvent> eventList) throws Exception {
 
         try {
-            if (client == null) {
-                client = getClient();
-            }
+
             BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
             for (EsEvent event : eventList) {
                 bulkRequestBuilder.add(client.prepareIndex(Constants.Events, Constants.Liveevents,
@@ -81,11 +133,7 @@ public class ESDao {
             closeClients();
         }
         return false;
-    }
 
-    private static void closeClients() {
-        if (null != client)
-            client.close();
     }
 
 //    private static EsEvent getNormalizedEvent(JSONObject jsonObject) {

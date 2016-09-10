@@ -1,0 +1,22 @@
+brew install mysql
+
+set password FOR 'root'@'localhost' = PASSWORD('q1w2e3r4');
+
+mysql -v
+
+mysql -u root
+
+mysql.server start
+
+--Create DB
+create database trendigo;
+
+show databases;
+
+use trendigo;
+
+create table firesales (id int(10) not null primary key auto_increment, title varchar(50), business varchar(50), lat
+decimal(10, 8) not null, lng decimal(11, 8) not null, imageurl varchar(200), url varchar(200), address varchar
+(200));
+
+desc firesales;
