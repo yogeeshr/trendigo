@@ -45,9 +45,7 @@ public class ESDao {
 
 
             BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
-
-            //TODO : Check if merchant id always exist : fallback
-
+            
             for (EsEvent product : products) {
 
                 //JSON With user story tagging which will be used for new document creation
