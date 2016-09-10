@@ -57,7 +57,8 @@ public class ESDao {
         long currentEpoc = (Instant.now().getMillis())/1000;
 
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        queryBuilder.must(QueryBuilders.rangeQuery(Constants.END_TIME).gt(Instant.now().getMillis()));
+        queryBuilder.must(QueryBuilders.rangeQuery(Constants.END_TIME).gt(currentEpoc));
+        queryBuilder.mustNot(QueryBuilders.matchQuery("bannerUrl", ""));
 
         System.out.println(queryBuilder.toString());
 
@@ -92,48 +93,26 @@ public class ESDao {
     public static Boolean writeESEvent(List<EsEvent> eventList) throws Exception {
 
         try {
-
             BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
             for (EsEvent event : eventList) {
                 bulkRequestBuilder.add(client.prepareIndex(Constants.Events, Constants.Liveevents,
                         event.getEventId()).setSource(new Gson().toJson(event)));
 
-                for (EsEvent product : eventList) {
-
-                    String json = new Gson().toJson(product);
-
-                    String updateJson = new Gson().toJson(product);
-
-                    IndexRequest indexRequest = new IndexRequest(Constants.TRENDIGO, Constants.EVENTS,
-                            product.getEventId()).
-                            source(json);
-
-                    UpdateRequest updateRequest = new UpdateRequest(Constants.TRENDIGO, Constants.EVENTS,
-                            product.getEventId()).
-                            upsert(indexRequest);
-
-                    boolean indexYes = client.admin().indices().prepareExists(Constants.TRENDIGO).execute().actionGet()
-                            .isExists();
-
-                    bulkRequestBuilder.add(updateRequest);
-
-                }
-                BulkResponse bulkResponse = bulkRequestBuilder.get();
-
-                if (bulkResponse.hasFailures()) {
-                    System.out.println(bulkResponse.buildFailureMessage() + " Bulk Update Error");
-                }
-
-                return true;
             }
+            createClient();
+            BulkResponse bulkResponse = bulkRequestBuilder.get();
+
+            if (bulkResponse.hasFailures()) {
+                System.out.println(bulkResponse.buildFailureMessage() + " Bulk Update Error");
+            }
+
+            return true;
         } catch (Exception e) {
             System.out.println("Exception occurred in bulk request builder - " + e);
             return false;
         } finally {
             closeClients();
         }
-        return false;
-
     }
 
 //    private static EsEvent getNormalizedEvent(JSONObject jsonObject) {
@@ -151,6 +130,7 @@ public class ESDao {
 //        event.setLabel(jsonObject.getString(Constants.LABEL));
 //        event.setLocation(jsonObject.getString(Constants.LABEL));
 //        event.setScore(jsonObject.getDouble(Constants.SCORE));
+//        event.setBannerUrl(jsonObject.getString("banner_url"));
 //
 //        JSONArray tagArray = jsonObject.getJSONArray(Constants.TAGS);
 //
@@ -207,7 +187,7 @@ public class ESDao {
 //                    EsEvent newEvent = getNormalizedEvent(jsonArray.getJSONObject(i));
 //                    eventList.add(newEvent);
 //                }
-//                writeESProduct(eventList);
+//                writeESEvent(eventList);
 //
 //            }
 //        } catch (Exception e) {
