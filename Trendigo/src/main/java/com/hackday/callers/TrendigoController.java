@@ -1,6 +1,9 @@
 package com.hackday.callers;
 
+import com.hackday.manager.FireSalesManager;
+import com.hackday.utils.Constants;
 import com.hackday.utils.TrendigoUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.ws.rs.Consumes;
@@ -22,20 +25,26 @@ public class TrendigoController {
     @Consumes("application/json")
     public Response getFireSalesNearBy(InputStream incomingData) {
 
+        JSONObject payload = null;
+        JSONArray jsonArray = null;
+
         try {
 
-            JSONObject payload = TrendigoUtils.getRequestJson(incomingData);
+            payload = TrendigoUtils.getRequestJson(incomingData);
 
-            if (null == payload) {
-                return Response.status(400).entity("Request JSON is empty").build();
+            if (null == payload || !payload.has(Constants.LAT) ||
+                    !payload.has(Constants.LONG) ) {
+                return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
             }
+
+             jsonArray = FireSalesManager.getFireSalesNearBy(payload.getString(Constants.LAT), payload
+                    .getString(Constants.LONG));
 
         } catch (Exception e){
             e.printStackTrace();
+            return Response.status(503).entity("Internal Server Error").build();
         }
 
-        JSONObject replyJson = new JSONObject("{'businessname' : 'ITC Gardenia', '':}");
-
-        return Response.status(200).entity(replyJson.toString()).build();
+        return Response.status(200).entity(jsonArray.get(0).toString()).build();
     }
 }

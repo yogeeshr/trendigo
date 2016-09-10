@@ -24,7 +24,7 @@ public class ESDao {
 
     private TransportClient getClient() {
         Settings settings = Settings.settingsBuilder()
-                .put("cluster.name", Constants.Trendigo).build();
+                .put("cluster.name", Constants.TRENDIGO).build();
         try {
             client = TransportClient.builder().settings(settings).build().addTransportAddress(
                     (new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300)));
@@ -47,20 +47,20 @@ public class ESDao {
             BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
 
             for (EsEvent product : products) {
-                
+
                 String json = new Gson().toJson(product);
 
                 String updateJson = new Gson().toJson(product);
 
-                IndexRequest indexRequest = new IndexRequest(Constants.Trendigo, Constants.Events,
+                IndexRequest indexRequest = new IndexRequest(Constants.TRENDIGO, Constants.EVENTS,
                         product.getEventId()).
                         source(json);
 
-                UpdateRequest updateRequest = new UpdateRequest(Constants.Trendigo, Constants.Events,
+                UpdateRequest updateRequest = new UpdateRequest(Constants.TRENDIGO, Constants.EVENTS,
                         product.getEventId()).
                         upsert(indexRequest);
 
-                boolean indexYes = client.admin().indices().prepareExists(Constants.Trendigo).execute().actionGet()
+                boolean indexYes = client.admin().indices().prepareExists(Constants.TRENDIGO).execute().actionGet()
                         .isExists();
 
                 bulkRequestBuilder.add(updateRequest);

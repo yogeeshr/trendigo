@@ -43,23 +43,31 @@ public class MySQLDao {
     }
 
     /**
+     * Method to get all firesales within 2 kms
+     * @param lat
+     * @param lng
      * @return
      * @throws Exception
      */
-    public static long getAllRowsOfFireSales() throws Exception {
-        String dbQuery = "Select * from firesales;";
+    public static List<Map<String, String>> getAllRowsOfFireSalesWithinMile(double lat, double lng, int mile) throws Exception {
+
+        String dbQuery = "SELECT * from firesales where ( 3959 * acos ( cos(radians(lat)) * cos(radians("+lat+") ) * " +
+                "cos (radians("+lng+")-radians(lng) ) + sin(radians(lat)) * sin(radians("+lat+")) ) ) < "+mile+";";
+
         List<Map<String, String>> rows = executeAndGetColumnsOutput(dbQuery);
+        return rows;
 
-        for (Map row : rows) {
-            System.out.println((String) row.get("id"));
-            System.out.println((String) row.get("business"));
-            System.out.println((String) row.get("lat"));
-            System.out.println((String) row.get("lng"));
-            System.out.println((String) row.get("imageurl"));
-            System.out.println((String) row.get("url"));
-        }
+    }
 
-        return rows.size();
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    public static List<Map<String, String>> getAllRowsOfFireSales() throws Exception {
+        String dbQuery = "Select * from firesales where;";
+        List<Map<String, String>> rows = executeAndGetColumnsOutput(dbQuery);
+        return rows;
     }
 
     /**
@@ -95,9 +103,4 @@ public class MySQLDao {
         return data == null ? null : data;
     }
 
-    public static void main(String[] args) throws Exception {
-        createConnection();
-        System.out.println(getAllRowsOfFireSales());
-        closeConnection();
-    }
 }
