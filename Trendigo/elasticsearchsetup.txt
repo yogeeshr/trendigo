@@ -1,0 +1,140 @@
+brew install elasticsearch;
+
+/usr/local/etc/elasticsearch/elasticsearch.yml
+
+set --> cluster.name: trendigo ( add a space at start of line )
+
+brew elasticsearch start;
+
+brew services start elasticsearch;
+
+In Sense plugin chrome ( Execute following with host : localhost:9200 ) :
+
+ PUT events
+ {
+    "settings": {
+       "indices.cache.filter.size": "20%",
+       "indices.cache.query.size": "40%",
+       "index": {
+          "cache": {
+             "query": {
+                "enable": "true"
+             }
+          },
+          "refresh_interval": "59s",
+          "number_of_shards": "1",
+          "number_of_replicas": "0",
+          "store": {
+             "type": "fs",
+             "fs": {
+                "memory": {
+                   "enabled": true
+                }
+             }
+          }
+       },
+       "analysis": {
+          "char_filter": {
+             "eat_underscore": {
+                "type": "mapping",
+                "mappings": [
+                   "_=>-"
+                ]
+             }
+          },
+          "analyzer": {
+             "index_analyzer": {
+                "tokenizer": "standard",
+                "char_filter": [
+                   "html_strip",
+                   "eat_underscore"
+                ],
+                "filter": [
+                   "standard",
+                   "lowercase",
+                   "stop",
+                   "asciifolding",
+                   "porter_stem"
+                ]
+             }
+          }
+       }
+    },
+    "mappings": {
+       "liveevents": {
+          "properties": {
+             "eventId": {
+                "index": "not_analyzed",
+                "type": "string"
+             },
+             "eventName": {
+                "index": "analyzed",
+                "term_vector": "yes",
+                "analyzer": "index_analyzer",
+                "search_analyzer": "english",
+                "type": "string"
+             },
+             "categories": {
+                "index": "analyzed",
+                "term_vector": "yes",
+                "analyzer": "index_analyzer",
+                "search_analyzer": "english",
+                "type": "string"
+             },
+             "tags": {
+                "index": "analyzed",
+                "term_vector": "yes",
+                "analyzer": "index_analyzer",
+                "search_analyzer": "english",
+                "type": "string"
+             },
+             "latitude": {
+                "index": "not_analyzed",
+                "type": "double"
+             },
+             "longitude": {
+                "index": "not_analyzed",
+                "type": "double"
+             },
+             "score": {
+                "index": "not_analyzed",
+                "type": "double"
+             },
+             "startTime": {
+                "index": "not_analyzed",
+                "type": "long"
+             },
+             "endTime": {
+                "index": "not_analyzed",
+                "type": "long"
+             },
+             "location": {
+                "index": "analyzed",
+                "term_vector": "yes",
+                "analyzer": "index_analyzer",
+                "search_analyzer": "english",
+                "type": "string"
+             },
+             "label": {
+                "type": "string",
+                "index": "analyzed",
+                "term_vector": "yes",
+                "analyzer": "index_analyzer",
+                "search_analyzer": "english"
+             },
+             "eventUrl": {
+                "type": "string",
+                "index": "not_analyzed"
+             },
+             "bannerUrl": {
+                "type": "string",
+                "index": "not_analyzed"
+             }
+          }
+       }
+    }
+ }
+
+To see content
+
+ get events/liveevents/_search

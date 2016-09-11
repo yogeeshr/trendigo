@@ -3,7 +3,6 @@ package com.hackday.manager;
 import com.hackday.dao.ESDao;
 import com.hackday.dao.MySQLDao;
 import com.hackday.utils.Constants;
-import com.hackday.utils.TrendigoUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
