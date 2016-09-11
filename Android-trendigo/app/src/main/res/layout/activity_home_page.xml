@@ -1,0 +1,222 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     tools:context=".HomePage">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:background="#fff">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView android:id="@+id/restauranttitle"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text="Popular restaurants near you"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffffff"
+                android:background="#ffb12f00" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/empire">
+                    <ImageView
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_margin="20dp"
+                        android:src="@drawable/empire2"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Empire Restaurant"
+                        android:textSize="16dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#000"
+                        android:textStyle="italic|bold"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/arbor">
+                    <ImageView
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_margin="20dp"
+                        android:src="@drawable/arbor2"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Arbor Brewery "
+                        android:textSize="16dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#000"
+                        android:textStyle="italic|bold"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/restaurantsearch">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/showmoreicon"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical">
+            <TextView android:id="@+id/eventtext"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text="Trending events near you"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:layout_marginTop="15dp"
+                android:textColor="#ffffffff"
+                android:background="#ffb12f00" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/empire2">
+                    <ImageView
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_margin="20dp"
+                        android:src="@drawable/ganesh"/>
+                    <TextView
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="Punarvasu Ganesh chaturthi 2016"
+                        android:textSize="16dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#000"
+                        android:textStyle="italic|bold"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/arbor2">
+                    <ImageView
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_margin="20dp"
+                        android:src="@drawable/onamfest"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OnamFest "
+                        android:textSize="16dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#000"
+                        android:textStyle="italic|bold"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/eventsearch">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/showmoreicon"/>
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/loadingPanel"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:gravity="center"-->
+            <!--android:visibility="invisible"-->
+            <!-->-->
+
+            <!--<ProgressBar-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:indeterminate="true"/>-->
+        <!--</RelativeLayout>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView android:id="@+id/firesales"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="bottom" />
+        </LinearLayout>
+        <!--<WebView  xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--android:id="@+id/webview"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="70dp"-->
+            <!--/>-->
+    </LinearLayout>
+</RelativeLayout>
