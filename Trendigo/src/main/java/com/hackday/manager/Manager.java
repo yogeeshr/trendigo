@@ -39,11 +39,11 @@ public class Manager {
 
             JSONObject jsonObject = new JSONObject();
 
-            jsonObject.put(business, Constants.BUSINESS);
-            jsonObject.put(title, Constants.TITLE);
-            jsonObject.put(imageurl, Constants.IMAGEURL);
-            jsonObject.put(url, Constants.URL);
-            jsonObject.put(address, Constants.ADDRESS);
+            jsonObject.put(Constants.BUSINESS, business);
+            jsonObject.put(Constants.TITLE, title);
+            jsonObject.put(Constants.IMAGEURL, imageurl);
+            jsonObject.put(Constants.URL, url);
+            jsonObject.put(Constants.ADDRESS, address);
 
             fireSalesArray.put(jsonObject);
         }
