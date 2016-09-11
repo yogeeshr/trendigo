@@ -1,14 +1,11 @@
 package com.hackday.callers;
 
 import com.hackday.manager.Manager;
-import com.hackday.utils.Constants;
-import com.hackday.utils.TrendigoUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.io.InputStream;
 
 /**
  * Created by yogeesh.rajendra on 9/10/16.
@@ -16,26 +13,23 @@ import java.io.InputStream;
 @Path("/")
 public class TrendigoController {
 
-    @POST
+    @GET
     @Path("/getfiresales")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response getFireSalesNearBy(InputStream incomingData) {
+    public Response getFireSalesNearBy(@QueryParam("lat") String latitude,
+                                       @QueryParam("long") String longitude) {
 
         JSONObject payload = null;
         JSONArray jsonArray = null;
 
         try {
 
-            payload = TrendigoUtils.getRequestJson(incomingData);
-
-            if (null == payload || !payload.has(Constants.LAT) ||
-                    !payload.has(Constants.LONG) ) {
+            if (null==latitude || null==longitude ) {
                 return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
             }
 
-             jsonArray = Manager.getFireSalesNearBy(payload.getString(Constants.LAT), payload
-                    .getString(Constants.LONG));
+             jsonArray = Manager.getFireSalesNearBy(latitude, longitude);
 
         } catch (Exception e){
             e.printStackTrace();
@@ -49,10 +43,10 @@ public class TrendigoController {
     @Path("/getevents")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response getTrandingEvents(@QueryParam("lat") String latitude,
+    public Response getTrendingEvents(@QueryParam("lat") String latitude,
                                       @QueryParam("long") String longitude) {
 
-        String responseArray = null;
+        JSONArray responseArray = null;
 
         try {
             if (null == latitude || null == longitude ||
@@ -67,6 +61,6 @@ public class TrendigoController {
             return Response.status(503).entity("Internal Server Error").build();
         }
 
-        return Response.status(200).entity(responseArray).build();
+        return Response.status(200).entity(responseArray.toString()).build();
     }
 }
