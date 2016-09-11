@@ -67,7 +67,7 @@ public class Manager {
 
             double dist = distance(latitude, eventLat, longitude, eventLong, 0, 0);
 
-            if ( dist < 4 ) {
+            if ( dist < 5 ) {
                 System.out.println(dist);
                 trendingEventsArray.put(jsonObject);
             }
