@@ -70,6 +70,8 @@ public class TrendigoController {
             responseArray.put(tmpArray.get(i));
         }
 
-        return Response.status(200).entity(responseArray.toString()).build();
+        JSONObject object = new JSONObject();
+        object.put("events", responseArray);
+        return Response.status(200).entity(object.toString()).build();
     }
 }
