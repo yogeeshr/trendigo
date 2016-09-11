@@ -79,7 +79,7 @@ public class ESDao {
                 .setSearchType(SearchType.QUERY_AND_FETCH)
                 .setQuery(queryBuilder)
                 .setFetchSource(include, exclude)
-                .setSize(100)
+                .setSize(300)
                 .execute()
                 .actionGet();
 
@@ -189,9 +189,9 @@ public class ESDao {
         try {
             URIBuilder builder = new URIBuilder("https://api.allevents.in/events/list/");
 
-            builder.setParameter("city", "chandigarh");
-            builder.setParameter("state", "punjab");
-            builder.setParameter("country", "India");
+            builder.setParameter("city", "New york");
+            builder.setParameter("state", "NY");
+            builder.setParameter("country", "United States");
             builder.setParameter("sdate", "11-09-2016");
             builder.setParameter("edate", "31-12-2016");
 
