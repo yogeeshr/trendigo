@@ -49,8 +49,8 @@ public class TrendigoController {
         JSONArray responseArray = null;
 
         try {
-            if (null == latitude || null == longitude ||
-                    latitude.length() == 0 || longitude.length() == 0) {
+
+            if (null==latitude || null==longitude ) {
                 return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
             }
 
