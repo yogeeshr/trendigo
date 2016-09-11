@@ -20,7 +20,6 @@ public class Splash extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-        //StartAnimations();
         Thread background = new Thread() {
             public void run() {
 
@@ -39,19 +38,4 @@ public class Splash extends Activity{
 
         background.start();
     }
-
-//    private void StartAnimations() {
-//        Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
-//        anim.reset();
-//        LinearLayout l=(LinearLayout) findViewById(R.id.linearlayout);
-//        l.clearAnimation();
-//        l.startAnimation(anim);
-//
-//        anim = AnimationUtils.loadAnimation(this, R.anim.translate);
-//        anim.reset();
-//        ImageView iv = (ImageView) findViewById(R.id.splashimg);
-//        iv.clearAnimation();
-//        iv.startAnimation(anim);
-//
-//    }
 }

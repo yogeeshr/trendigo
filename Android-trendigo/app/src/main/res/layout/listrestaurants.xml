@@ -2,6 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="190dp"
     android:padding="6dip"
+    android:background="#DCDCDC"
     android:orientation="vertical">
 
     <FrameLayout
@@ -35,8 +36,6 @@
             android:stepSize="0.01"
             android:layout_gravity="right" />
     </FrameLayout>
-
-
 
     <FrameLayout
         android:layout_width="match_parent"

@@ -61,18 +61,12 @@ public class RestaurantSearchResult extends ListActivity {
             toastTV.setTextSize(15);
             toast.show();
         }
-
-
-//        ImageView fireSales = null;
-//        fireSales = (ImageView) findViewById(R.id.firesales);
-//        fireSales.setImageResource(R.drawable.firesalesdemo);
     }
 
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
 
-        //get selected items
         String selectedValue = (String) getListAdapter().getItem(position);
         try {
             PackageManager pm = getPackageManager();
@@ -91,13 +85,11 @@ public class RestaurantSearchResult extends ListActivity {
                 toast.show();
             }
             } catch (PackageManager.NameNotFoundException e) {
-            // No Uber app! Open Mobile Website.
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.uber.com/sign-up?client_id=YOUR_CLIENT_ID"));
             startActivity(browserIntent);
         }
-        //Toast.makeText(this, selectedValue, Toast.LENGTH_SHORT).show();
-
     }
+
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

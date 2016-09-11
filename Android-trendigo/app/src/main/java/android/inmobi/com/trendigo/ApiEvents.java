@@ -2,11 +2,8 @@ package android.inmobi.com.trendigo;
 
 import android.app.Activity;
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.SystemClock;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 
 import java.io.BufferedReader;
@@ -17,9 +14,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by deepak.jha on 9/11/16.
@@ -28,14 +22,14 @@ public class ApiEvents extends Activity {
     private String params, latlong;
     private double latitude, longitude;
     private String finalresponse;
-    protected BitmapDescriptor accept, yourlocation;
-    public ArrayList<String> listname, listlat, listlng, listaddress, listpopulation, listdistance;
+    private int count;
     private Context previousClass;
 
-    public String makeRequest(double lat, double lng)  throws IOException {
+    public String makeRequest(double lat, double lng, int countParam)  throws IOException {
         latitude = lat;
         longitude = lng;
         latlong = latitude+","+longitude;
+        count = countParam;
         thread.start();
         SystemClock.sleep(6000);
         return finalresponse;
@@ -47,10 +41,11 @@ public class ApiEvents extends Activity {
         public void run() {
             try {
                 if(latlong=="0.0,0.0"){
-                    latitude=(double)12.994604;
-                    longitude=(double)77.625725;
+                    System.out.println("lat long 0 for events");
+                    latitude = (double) 12.9669965;
+                    longitude = (double) 77.5934489;
                 }
-                String url = "http://192.168.43.63:9099/trendigo/api/getevents?lat="+latitude+"&long="+longitude;
+                String url = "http://192.168.43.71:9099/trendigo/api/getevents?lat="+latitude+"&long="+longitude+"&limit="+count;
                 System.out.println("The events url is : " + url);
 
                 URL obj = new URL(url);
