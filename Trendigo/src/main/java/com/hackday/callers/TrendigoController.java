@@ -44,23 +44,34 @@ public class TrendigoController {
     @Produces("application/json")
     @Consumes("application/json")
     public Response getTrendingEvents(@QueryParam("lat") String latitude,
-                                      @QueryParam("long") String longitude) {
+                                      @QueryParam("long") String longitude,
+                                      @QueryParam("limit") int limit) {
 
-        JSONArray responseArray = null;
+        JSONArray responseArray = new JSONArray();
+        JSONArray tmpArray = null;
 
         try {
-            if (null == latitude || null == longitude ||
-                    latitude.length() == 0 || longitude.length() == 0) {
+
+            if (null==latitude || null==longitude || limit<=0) {
                 return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
             }
 
-            responseArray = Manager.getTrendingEvents(latitude, longitude);
+            tmpArray = Manager.getTrendingEvents(latitude, longitude);
 
         } catch (Exception e){
             e.printStackTrace();
             return Response.status(503).entity("Internal Server Error").build();
         }
 
-        return Response.status(200).entity(responseArray.toString()).build();
+        for (int i=0; i<limit && i<tmpArray.length(); i++) {
+            if (null== tmpArray || null==tmpArray.get(i)) {
+                break;
+            }
+            responseArray.put(tmpArray.get(i));
+        }
+
+        JSONObject object = new JSONObject();
+        object.put("events", responseArray);
+        return Response.status(200).entity(object.toString()).build();
     }
 }

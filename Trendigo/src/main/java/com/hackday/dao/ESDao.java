@@ -64,7 +64,6 @@ public class ESDao {
 
         String [] include = {"eventName", "startTime", "endTime", "location", "eventUrl", "bannerUrl", "latitude", "longitude"};
         String [] exclude = {"categories", "tags", "eventId"};
-        JSONArray trendingEvents=null;
         long currentEpoc = (Instant.now().getMillis()) / 1000;
 
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
@@ -80,7 +79,7 @@ public class ESDao {
                 .setSearchType(SearchType.QUERY_AND_FETCH)
                 .setQuery(queryBuilder)
                 .setFetchSource(include, exclude)
-                .setSize(50)
+                .setSize(300)
                 .execute()
                 .actionGet();
 
@@ -190,9 +189,9 @@ public class ESDao {
         try {
             URIBuilder builder = new URIBuilder("https://api.allevents.in/events/list/");
 
-            builder.setParameter("city", "bangalore");
-            builder.setParameter("state", "karnataka");
-            builder.setParameter("country", "India");
+            builder.setParameter("city", "New york");
+            builder.setParameter("state", "NY");
+            builder.setParameter("country", "United States");
             builder.setParameter("sdate", "11-09-2016");
             builder.setParameter("edate", "31-12-2016");
 
@@ -210,6 +209,7 @@ public class ESDao {
             if (entity != null) {
                 JSONObject object = new JSONObject(EntityUtils.toString(entity));
                 JSONArray jsonArray = object.getJSONArray("data");
+                System.out.println(jsonArray.toString());
                 List<EsEvent> eventList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     EsEvent newEvent = getNormalizedEvent(jsonArray.getJSONObject(i));
