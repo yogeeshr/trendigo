@@ -53,7 +53,7 @@ public class TrendigoController {
         try {
 
             if (null==latitude || null==longitude || limit<=0) {
-                return Response.status(400).entity("Request JSON is empty or latlong is missing").build();
+                return Response.status(400).entity("Request JSON is empty or latlong or limit is missing").build();
             }
 
             tmpArray = Manager.getTrendingEvents(latitude, longitude);

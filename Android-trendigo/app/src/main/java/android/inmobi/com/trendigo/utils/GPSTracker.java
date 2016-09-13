@@ -1,4 +1,4 @@
-package android.inmobi.com.trendigo;
+package android.inmobi.com.trendigo.utils;
 
 import android.Manifest;
 import android.app.AlertDialog;

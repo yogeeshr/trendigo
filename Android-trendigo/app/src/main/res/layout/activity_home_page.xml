@@ -1,22 +1,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-     tools:context=".HomePage"
-    android:padding="5dp"
-    android:background="#A9A9A9">
+     tools:context=".HomePage">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <ImageView android:src="@drawable/blurhome"
+            android:scaleType = "centerCrop"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/bgimg"/>
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="5dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text="   SPOOF GPS"
+                android:textColor="#fff"
+                android:id="@+id/changeloc"
+                android:layout_margin="2dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/rounded3"/>
+        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_centerVertical="true"
-        android:layout_marginTop="10dp"
-        android:background="#fff">
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded2"
             >
             <TextView android:id="@+id/restauranttitle"
                 android:layout_width="match_parent"
@@ -24,8 +49,10 @@
                 android:text="Popular restaurants near you"
                 android:textSize="18dp"
                 android:textStyle="bold"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
-                android:textColor="#0000CD"/>
+                android:textColor="#4169E1"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,21 +64,24 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:id="@+id/rest1"
-                    android:layout_marginLeft="10dp">
+                    android:layout_marginLeft="10dp"
+                    >
                     <ImageView
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:layout_margin="5dp"
-                        android:id="@+id/restimg1"/>
+                        android:id="@+id/restimg1"
+                        android:src="@drawable/blurrest"/>
                     <TextView
                         android:layout_width="120dp"
-                        android:layout_height="50dp"
+                        android:layout_height="40dp"
                         android:id="@+id/resttxt1"
-                        android:textSize="16dp"
+                        android:textSize="12dp"
                         android:maxLines="2"
                         android:maxLength="25"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#000"
+                        android:text="loading.."
                         />
                 </LinearLayout>
                 <LinearLayout
@@ -66,24 +96,25 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:id="@+id/restimg2"
+                        android:src="@drawable/blurrest"
                         />
                     <TextView
                         android:layout_width="120dp"
-                        android:layout_height="50dp"
+                        android:layout_height="40dp"
                         android:maxLines="2"
                         android:maxLength="25"
                         android:id="@+id/resttxt2"
-                        android:textSize="16dp"
+                        android:textSize="12dp"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#000"
+                        android:text="loading.."
                         />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="45dp"
                     android:id="@+id/restaurantsearch">
                     <ImageView
                         android:layout_width="match_parent"
@@ -98,6 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:orientation="vertical"
+            android:background="@drawable/rounded2"
             >
             <TextView android:id="@+id/eventtext"
                 android:layout_width="match_parent"
@@ -105,8 +137,10 @@
                 android:text="Trending events near you"
                 android:layout_marginLeft="15dp"
                 android:textSize="18dp"
+                android:layout_marginTop="10dp"
                 android:textStyle="bold"
-                android:textColor="#0000CD"/>
+                android:textColor="#4169E1"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -122,18 +156,21 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:id="@+id/eventimg1"
-                        android:layout_marginTop="5dp"/>
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/blurevent"/>
                     <TextView
                         android:layout_width="120dp"
-                        android:layout_height="50dp"
+                        android:layout_height="40dp"
                         android:maxLines="2"
                         android:maxLength="25"
-                        android:textSize="16dp"
+                        android:textSize="12dp"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#000"
                         android:id="@+id/evnttxt1"
                         android:allowUndo="false"
-                        android:textAlignment="center" />
+                        android:textAlignment="center"
+                        android:text="loading.."
+                        />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -146,24 +183,25 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:id="@+id/eventimg2"
+                        android:src="@drawable/blurevent"
                         />
                     <TextView
                         android:layout_width="120dp"
-                        android:layout_height="50dp"
+                        android:layout_height="40dp"
                         android:maxLines="2"
                         android:maxLength="25"
-                        android:textSize="16dp"
+                        android:textSize="12dp"
                         android:id="@+id/evnttxt2"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#000"
+                        android:text="loading.."
                         />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="45dp"
                     android:id="@+id/eventsearch">
                     <ImageView
                         android:layout_width="match_parent"
@@ -188,21 +226,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Loading ..."
-                android:id="@+id/loading"
-                android:visibility="invisible"/>
+            android:layout_marginTop="10dp">
             <ImageView android:id="@+id/firesales"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:clickable="true"
                 android:gravity="center"
                 android:textAlignment="center"
-                android:layout_marginTop="10dp"
                 android:layout_gravity="bottom" />
         </LinearLayout>
     </LinearLayout>
+    </FrameLayout>
 </RelativeLayout>

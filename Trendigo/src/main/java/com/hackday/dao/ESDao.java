@@ -189,9 +189,9 @@ public class ESDao {
         try {
             URIBuilder builder = new URIBuilder("https://api.allevents.in/events/list/");
 
-            builder.setParameter("city", "New york");
-            builder.setParameter("state", "NY");
-            builder.setParameter("country", "United States");
+            builder.setParameter("city", "Chandigarh");
+            builder.setParameter("state", "punjab");
+            builder.setParameter("country", "India");
             builder.setParameter("sdate", "11-09-2016");
             builder.setParameter("edate", "31-12-2016");
 

@@ -14,7 +14,7 @@
         </activity>
 
         <activity
-            android:name="android.inmobi.com.trendigo.Splash"
+            android:name=".splash.Splash"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,16 +48,20 @@
         </activity>
 
         <activity
-            android:name="android.inmobi.com.trendigo.RestaurantSearchResult"
+            android:name="android.inmobi.com.trendigo.restaurant.RestaurantSearchResult"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name="android.inmobi.com.trendigo.ApiZomato"
+            android:name="android.inmobi.com.trendigo.api.ApiZomato"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name="android.inmobi.com.trendigo.EventSearchResult"
+            android:name=".events.EventSearchResult"
             android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".utils.map"
+            android:label="Trendigo">
         </activity>
 
         <meta-data
@@ -72,5 +76,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
 </manifest>

@@ -1,33 +1,17 @@
-package android.inmobi.com.trendigo;
+package android.inmobi.com.trendigo.api;
 
-import android.app.Activity;
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-
+import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -38,33 +22,26 @@ public class ApiZomato extends AppCompatActivity {
     private static String client_Id_dj = "18a7c3cc91b76a26869e0f6edf8894e3";
     private static String client_Id_tm = "8e14d3ec015ad33b0df5ff8be22e960b";
     private static Context context;
-    private String params, latlong;
-    private double latitude, longitude;
-    private double radius;
-    private int count;
-    private String finalresponse;
+    private String params;
+    private static String latlong;
+    private static double latitude;
+    private static double longitude;
+    private static double radius;
+    private static int count;
+    private static String finalresponse;
     private Context previousClass;
 
-    public String makeRequest(double lat, double lng, int countParam, double radiusParam)  throws IOException {
+    public String makeRequest(double lat, double lng, int countParam, double radiusParam) throws IOException, InterruptedException {
         latitude = lat;
         longitude = lng;
-        System.out.println("latitude obtained is "+lat);
-        System.out.println("longitude obtained is "+lng);
-
+        Log.e("latitude obtained is ",String.valueOf(lat));
+        Log.e("longitude obtained is ",String.valueOf(lng));
         radius = radiusParam;
         count = countParam;
-        ProgressDialog mDialog = new ProgressDialog(context);
-        mDialog.setMessage("Please wait...");
-        mDialog.setCancelable(false);
-        mDialog.show();
-
         thread.start();
-        SystemClock.sleep(10000);
-        mDialog.hide();
-
+        thread.join();
         return finalresponse;
     }
-
 
     Thread thread = new Thread(new Runnable() {
         @Override
@@ -75,18 +52,12 @@ public class ApiZomato extends AppCompatActivity {
                         latitude = (double) 12.9669965;
                         longitude = (double) 77.5934489;
                     }
-
-
                     String url = "https://developers.zomato.com/api/v2.1/search?count="+count+"&lat="+latitude+"&lon="+longitude+"&radius="+radius+"&sort=rating&order=desc";
-                    //String url = "https://developers.zomato.com/api/v2.1/geocode?lat=" + latitude + "&lon=" + longitude;
                     //String url = "https://developers.zomato.com/api/v2.1/geocode?lat=12.9669965&lon=77.5934489";
                     System.out.println("The zomato url is : " + url);
-
                     URL obj = new URL(url);
                     System.out.println("just before opening conn");
                     HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-
-
                     con.setRequestMethod("GET");
                     con.setRequestProperty("user-key", client_Id_tm);
                     con.setRequestProperty("Accept", "application/json");

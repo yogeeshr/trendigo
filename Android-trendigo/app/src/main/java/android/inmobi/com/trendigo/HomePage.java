@@ -1,12 +1,17 @@
 package android.inmobi.com.trendigo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.inmobi.com.trendigo.api.ApiEvents;
+import android.inmobi.com.trendigo.api.ApiZomato;
+import android.inmobi.com.trendigo.events.EventSearchResult;
+import android.inmobi.com.trendigo.restaurant.RestaurantSearchResult;
+import android.inmobi.com.trendigo.splash.Splash;
+import android.inmobi.com.trendigo.utils.epochConverter;
+import android.inmobi.com.trendigo.utils.map;
+import android.inmobi.com.trendigo.utils.networkConnection;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -26,26 +31,21 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class HomePage extends AppCompatActivity {
     private static LinearLayout searchrestaurant = null;
     private static LinearLayout searchevent = null;
-    private static double lat;
-    private static double lng;
     private static int countOfRestaurants, countOfEvents;
     private static double radiusOfSearch;
+    public static double lat,lng;
     private static String restaurantApiResponse, eventApiResponse;
 
     public ArrayList<String> listname, listlat, listlng, listaddress, listRating, listdistance,
-            listSearchUrl, listImageUrl, listStartDate, listEndDate;
+            listSearchUrl, listImageUrl, listStartDate, listEndDate, listCuisine;
 
     public ImageView restimg1, restimg2,eventimg1, eventimg2;
-    public TextView resttxt1, resttxt2,eventtxt1, eventtxt2;
+    public TextView resttxt1, resttxt2,eventtxt1, eventtxt2, changeloc;
 
 
     @Override
@@ -62,6 +62,7 @@ public class HomePage extends AppCompatActivity {
         listImageUrl = new ArrayList<String>();
         listStartDate = new ArrayList<String>();
         listEndDate = new ArrayList<String>();
+        listCuisine = new ArrayList<String>();
 
         restimg1 = (ImageView) findViewById(R.id.restimg1);
         restimg2 = (ImageView) findViewById(R.id.restimg2);
@@ -72,22 +73,24 @@ public class HomePage extends AppCompatActivity {
         eventtxt1 = (TextView) findViewById(R.id.evnttxt1);
         eventtxt2 = (TextView) findViewById(R.id.evnttxt2);
 
+        changeloc = (TextView) findViewById(R.id.changeloc);
         searchrestaurant = (LinearLayout) findViewById(R.id.restaurantsearch);
         searchevent = (LinearLayout) findViewById(R.id.eventsearch);
 
 
-        GPSTracker gpsTracker = new GPSTracker(this);
-        if (gpsTracker.canGetLocation()) {
-            lat = gpsTracker.getLatitude();
-            lng = gpsTracker.getLongitude();
-        }
+//        GPSTracker gpsTracker = new GPSTracker(this);
+//        if (gpsTracker.canGetLocation()) {
+//            lat = gpsTracker.getLatitude();
+//            lng = gpsTracker.getLongitude();
+//        }
 
-        try {
-            restaurantApiResponse = callRestaurantApi(lat,lng, 2, 5000.0);
-            eventApiResponse = callEventApi(lat, lng, 2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        lat = Splash.lat;
+        lng = Splash.lng;
+        restaurantApiResponse = Splash.restaurantResponse;
+        eventApiResponse = Splash.eventResponse;
+
+        System.out.println("rest resp in homepage is" + restaurantApiResponse);
+        System.out.println("event resp in homepage is" + eventApiResponse);
 
         if(restaurantApiResponse!=null){
             try {
@@ -95,6 +98,12 @@ public class HomePage extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }else{
+            Toast toast = Toast.makeText(HomePage.this, "No restaurants near you.", Toast.LENGTH_LONG);
+            LinearLayout toastLayout = (LinearLayout) toast.getView();
+            TextView toastTV = (TextView) toastLayout.getChildAt(0);
+            toastTV.setTextSize(15);
+            toast.show();
         }
 
         if(eventApiResponse!=null){
@@ -103,6 +112,12 @@ public class HomePage extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }else{
+            Toast toast = Toast.makeText(HomePage.this, "No events near you.", Toast.LENGTH_LONG);
+            LinearLayout toastLayout = (LinearLayout) toast.getView();
+            TextView toastTV = (TextView) toastLayout.getChildAt(0);
+            toastTV.setTextSize(15);
+            toast.show();
         }
 
 
@@ -131,26 +146,24 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
-
+        System.out.println("latlng in Homepage is " + lat + " " + lng);
 
         searchrestaurant.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if(isNetworkAvailable()) {
+                if (networkConnection.isNetworkAvailable(HomePage.this)) {
                     //findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-                    countOfRestaurants = 10;
+                    countOfRestaurants = 15;
                     radiusOfSearch = 5000.0;
-
                     System.out.println("after");
                     ApiZomato requestZomato = new ApiZomato(HomePage.this);
                     String resp = null;
                     try {
                         resp = requestZomato.makeRequest(lat, lng, countOfRestaurants, radiusOfSearch);
-                        System.out.println(" zamato Resp is : " + resp);
-                        if(resp!=null) {
+                        if (resp != null) {
                             parseRestaurantResponse(resp);
-                        }else{
+                        } else {
                             Toast toast = Toast.makeText(HomePage.this, "Nothing to show.", Toast.LENGTH_LONG);
                             LinearLayout toastLayout = (LinearLayout) toast.getView();
                             TextView toastTV = (TextView) toastLayout.getChildAt(0);
@@ -161,9 +174,11 @@ public class HomePage extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        Log.e("Interrupted connection Splash", e.getMessage());
+                        e.printStackTrace();
                     }
-                    System.out.println(" zamato Resp is : " + resp);
-                }else{
+                } else {
                     Toast toast = Toast.makeText(HomePage.this, "Please check your internet connection.", Toast.LENGTH_LONG);
                     LinearLayout toastLayout = (LinearLayout) toast.getView();
                     TextView toastTV = (TextView) toastLayout.getChildAt(0);
@@ -176,7 +191,7 @@ public class HomePage extends AppCompatActivity {
         searchevent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNetworkAvailable()) {
+                if (networkConnection.isNetworkAvailable(HomePage.this)) {
                     ApiEvents requestEvents = new ApiEvents(HomePage.this);
                     String resp = null;
                     try {
@@ -188,17 +203,27 @@ public class HomePage extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        Log.e("Interrupted connection Splash",e.getMessage());
+                        e.printStackTrace();
                     }
 
                     System.out.println(" events Resp is : " + resp);
                 }else{
-                   // findViewById(R.id.loadingPanel).setVisibility(View.INVISIBLE);
                     Toast toast = Toast.makeText(HomePage.this, "Please check your internet connection.", Toast.LENGTH_LONG);
                     LinearLayout toastLayout = (LinearLayout) toast.getView();
                     TextView toastTV = (TextView) toastLayout.getChildAt(0);
                     toastTV.setTextSize(15);
                     toast.show();
                 }
+            }
+        });
+
+        changeloc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePage.this,map.class);
+                startActivity(intent);
             }
         });
 
@@ -257,7 +282,7 @@ public class HomePage extends AppCompatActivity {
         listStartDate.clear();
         listEndDate.clear();
 
-        String id,name,searchurl,address,rest_lat, rest_lon,imageUrl,rating;
+        String id,name,searchurl,address,rest_lat, rest_lon,imageUrl,rating,cuisine;
         System.out.println("into parse response method");
 
         JSONObject json = new JSONObject(apiResponse);
@@ -283,6 +308,8 @@ public class HomePage extends AppCompatActivity {
                 rest_lat = locationObject.getString("latitude");
                 rest_lon = locationObject.getString("longitude");
                 imageUrl = singleObject.getString("thumb");
+                cuisine = singleObject.getString("cuisines");
+                System.out.println("Cusines is "+cuisine);
                 user_ratingObject = singleObject.getJSONObject("user_rating");
                 rating = user_ratingObject.getString("aggregate_rating");
 
@@ -302,6 +329,7 @@ public class HomePage extends AppCompatActivity {
                 listRating.add(rating);
                 listImageUrl.add(imageUrl);
                 listSearchUrl.add(searchurl);
+                listCuisine.add(cuisine);
             }
 
             Intent intent = new Intent(HomePage.this, RestaurantSearchResult.class);
@@ -315,6 +343,7 @@ public class HomePage extends AppCompatActivity {
             intent.putStringArrayListExtra("address", listaddress);
             intent.putStringArrayListExtra("imageUrl", listImageUrl);
             intent.putStringArrayListExtra("searchUrl", listSearchUrl);
+            intent.putStringArrayListExtra("cuisine", listCuisine);
             startActivity(intent);
 
         }
@@ -356,8 +385,8 @@ public class HomePage extends AppCompatActivity {
                 event_lon = singleEvent.getString("longitude");
                 address = singleEvent.getString("location");
 
-                startdate = epochToDate(Long.valueOf(starttime) * 1000);
-                enddate = epochToDate(Long.valueOf(endtime) * 1000);
+                startdate = epochConverter.epochToDate(Long.valueOf(starttime) * 1000);
+                enddate = epochConverter.epochToDate(Long.valueOf(endtime) * 1000);
                 listname.add(name);
                 listImageUrl.add(imageUrl);
                 listSearchUrl.add(searchurl);
@@ -384,68 +413,6 @@ public class HomePage extends AppCompatActivity {
 
         }
     }
-
-    private static String epochToDate(Long epochTime){
-        Date date = new Date(epochTime);
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-        String formatted = format.format(date);
-        format.setTimeZone(TimeZone.getTimeZone("India/Mumbai"));
-        formatted = format.format(date);
-        return formatted;
-    }
-
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-
-    private String callRestaurantApi(double latitude, double longitude, int count, double radius) throws IOException {
-        if (isNetworkAvailable()) {
-            countOfRestaurants = count;
-            radiusOfSearch = radius;
-
-            System.out.println("after");
-            ApiZomato requestZomato = new ApiZomato(HomePage.this);
-            String resp = null;
-            resp = requestZomato.makeRequest(latitude, longitude, countOfRestaurants, radiusOfSearch);
-            System.out.println(" zamato Resp is : " + resp);
-            return resp;
-
-        }else{
-            Toast toast = Toast.makeText(HomePage.this, "Please check your internet connection.", Toast.LENGTH_LONG);
-            LinearLayout toastLayout = (LinearLayout) toast.getView();
-            TextView toastTV = (TextView) toastLayout.getChildAt(0);
-            toastTV.setTextSize(15);
-            toast.show();
-            return null;
-        }
-    }
-
-
-    private String callEventApi(double latitude, double longitude, int count) throws IOException {
-        if (isNetworkAvailable()) {
-            int countOfEvents = count;
-
-
-            ApiEvents requestEvents = new ApiEvents(HomePage.this);
-            String resp = null;
-            resp = requestEvents.makeRequest(latitude, longitude, countOfEvents);
-            System.out.println(" events Resp is : " + resp);
-            return resp;
-        }else{
-            Toast toast = Toast.makeText(HomePage.this, "Please check your internet connection.", Toast.LENGTH_LONG);
-            LinearLayout toastLayout = (LinearLayout) toast.getView();
-            TextView toastTV = (TextView) toastLayout.getChildAt(0);
-            toastTV.setTextSize(15);
-            toast.show();
-            return null;
-        }
-    }
-
 
     private final void parseRestaurantResponseHome(String apiResponse) throws JSONException {
         String name,searchurl,imageUrl;
@@ -555,13 +522,8 @@ public class HomePage extends AppCompatActivity {
                         }
                     });
                     eventtxt2.setText(name);
-
                 }
-
             }
-
         }
     }
-
-
 }
